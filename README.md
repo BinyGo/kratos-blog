@@ -1,6 +1,8 @@
 # kratos-blog
 
-基于kratos开发的一个学习项目，建立一个博客项目，使用proto,ent,mysql,redis,cros,casbin,jwt
+基于kratos框架的一个练习项目，使用proto,ent,mysql,redis,cros,casbin,jwt
+结合gitlab实现CI/CD
+后期展望:es,mongo,hbase,docker,k8s
 
 ## Getting started
 
