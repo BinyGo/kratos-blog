@@ -59,6 +59,18 @@ var (
 		Columns:    TagsColumns,
 		PrimaryKey: []*schema.Column{TagsColumns[0]},
 	}
+	// UsersColumns holds the columns for the "users" table.
+	UsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "username", Type: field.TypeString},
+		{Name: "password", Type: field.TypeString},
+	}
+	// UsersTable holds the schema information for the "users" table.
+	UsersTable = &schema.Table{
+		Name:       "users",
+		Columns:    UsersColumns,
+		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	}
 	// TagPostsColumns holds the columns for the "tag_posts" table.
 	TagPostsColumns = []*schema.Column{
 		{Name: "tag_id", Type: field.TypeInt64},
@@ -89,6 +101,7 @@ var (
 		ArticlesTable,
 		CommentsTable,
 		TagsTable,
+		UsersTable,
 		TagPostsTable,
 	}
 )

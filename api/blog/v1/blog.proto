@@ -39,6 +39,7 @@ service Blog {
             get: "/v1/article"
         };
     }
+    
 }
 
 message Article {

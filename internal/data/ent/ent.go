@@ -8,6 +8,7 @@ import (
 	"kratos-blog/internal/data/ent/article"
 	"kratos-blog/internal/data/ent/comment"
 	"kratos-blog/internal/data/ent/tag"
+	"kratos-blog/internal/data/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -34,6 +35,7 @@ func columnChecker(table string) func(string) error {
 		article.Table: article.ValidColumn,
 		comment.Table: comment.ValidColumn,
 		tag.Table:     tag.ValidColumn,
+		user.Table:    user.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

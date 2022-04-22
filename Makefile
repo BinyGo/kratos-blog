@@ -43,6 +43,20 @@ generate:
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
 
+.PHONY: wire
+# wire
+wire:
+	cd cmd/kratos-blog/ && wire
+
+.PHONY: docker-up
+# docker-compose up -d
+docker-up:
+	cd deploy/docker-compose/ && docker-compose up -d
+.PHONY: docker-down
+# docker-compose down
+docker-down:
+	cd deploy/docker-compose/ && docker-compose down	
+
 .PHONY: all
 # generate all
 all:

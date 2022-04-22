@@ -5,17 +5,8 @@ import (
 	pb "kratos-blog/api/blog/v1"
 	"kratos-blog/internal/biz"
 
-	"github.com/go-kratos/kratos/v2/log"
-
 	"go.opentelemetry.io/otel"
 )
-
-func NewBlogService(article *biz.ArticleUsecase, logger log.Logger) *BlogService {
-	return &BlogService{
-		article: article,
-		log:     log.NewHelper(logger),
-	}
-}
 
 func (s *BlogService) CreateArticle(ctx context.Context, req *pb.CreateArticleRequest) (*pb.CreateArticleReply, error) {
 	s.log.Infof("input data %v", req)

@@ -27,6 +27,7 @@ type hooks struct {
 	Article []ent.Hook
 	Comment []ent.Hook
 	Tag     []ent.Hook
+	User    []ent.Hook
 }
 
 // Options applies the options on the config object.
