@@ -5,6 +5,7 @@ import (
 	"errors"
 	"kratos-blog/internal/conf"
 	"math/rand"
+	"time"
 
 	pb "kratos-blog/api/blog/v1"
 
@@ -24,7 +25,7 @@ func NewAuthUseCase(conf *conf.Auth, userRepo UserRepo) *AuthUseCase {
 }
 
 func (uc *AuthUseCase) Login(ctx context.Context, user *User) (*pb.LoginReply, error) {
-	user, err := uc.userRepo.Find(ctx, user.Id)
+	user, err := uc.userRepo.FindByUsername(ctx, user.Username)
 	if err != nil {
 		return nil, err
 	}
@@ -34,9 +35,11 @@ func (uc *AuthUseCase) Login(ctx context.Context, user *User) (*pb.LoginReply, e
 	}
 	// generate token
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.Id,
+		"uid": user.Id,
+		"exp": time.Now().Unix() + 60*60*24,
 	})
 	signedString, err := claims.SignedString([]byte(uc.key))
+
 	if err != nil {
 		return nil, err
 	}

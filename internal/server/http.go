@@ -15,15 +15,15 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/swagger-api/openapiv2"
-	jwt2 "github.com/golang-jwt/jwt/v4"
+	jwt4 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 )
 
 func NewWhiteListMatcher() selector.MatchFunc {
 
 	whiteList := make(map[string]struct{})
-	whiteList["/api.blog.v1.Blog/Login"] = struct{}{}
-	whiteList["/api.blog.v1.Blog/Register"] = struct{}{}
+	whiteList["/api.blog.v1.Auth/Login"] = struct{}{}
+	whiteList["/api.blog.v1.Auth/Register"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return false
@@ -41,14 +41,16 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, blog *service.BlogService, aut
 			logging.Server(logger),
 			validate.Validator(),
 			selector.Server(
-				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
-					return []byte(ac.ApiKey), nil
-				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256), jwt.WithClaims(func() jwt2.Claims {
-					return &jwt2.MapClaims{}
-				})),
-			).
-				Match(NewWhiteListMatcher()).
-				Build(),
+				jwt.Server(
+					func(token *jwt4.Token) (interface{}, error) {
+						return []byte(ac.ApiKey), nil
+					},
+					jwt.WithSigningMethod(jwt4.SigningMethodHS256),
+					jwt.WithClaims(func() jwt4.Claims {
+						return &jwt4.MapClaims{}
+					}),
+				),
+			).Match(NewWhiteListMatcher()).Build(),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),

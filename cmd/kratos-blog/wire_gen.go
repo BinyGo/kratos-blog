@@ -26,11 +26,11 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, logg
 	}
 	articleRepo := data.NewArticleRepo(dataData, logger)
 	articleUsecase := biz.NewArticleUsecase(articleRepo, logger)
+	blogService := service.NewBlogService(articleUsecase, logger)
 	userRepo := data.NewUserRepo(dataData, logger)
 	authUseCase := biz.NewAuthUseCase(auth, userRepo)
 	userUseCase := biz.NewUserUseCase(userRepo, logger, authUseCase)
-	blogService := service.NewBlogService(articleUsecase, userUseCase, authUseCase, logger)
-	authService := service.NewAuthService()
+	authService := service.NewAuthService(userUseCase, authUseCase, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, blogService, authService, logger)
 	grpcServer := server.NewGRPCServer(confServer, blogService, logger)
 	app := newApp(logger, httpServer, grpcServer)

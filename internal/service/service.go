@@ -16,15 +16,11 @@ type BlogService struct {
 	log *log.Helper
 
 	article *biz.ArticleUsecase
-	user    *biz.UserUseCase
-	auth    *biz.AuthUseCase
 }
 
-func NewBlogService(article *biz.ArticleUsecase, user *biz.UserUseCase, auth *biz.AuthUseCase, logger log.Logger) *BlogService {
+func NewBlogService(article *biz.ArticleUsecase, logger log.Logger) *BlogService {
 	return &BlogService{
 		article: article,
-		user:    user,
-		auth:    auth,
 		log:     log.NewHelper(logger),
 	}
 }
