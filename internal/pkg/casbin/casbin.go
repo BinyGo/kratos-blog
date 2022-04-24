@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"kratos-blog/internal/conf"
-	"log"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -24,10 +24,6 @@ type JwtUser struct {
 type contextKey string
 
 const (
-	ModelContextKey    contextKey = "CasbinModel"
-	PolicyContextKey   contextKey = "CasbinPolicy"
-	EnforcerContextKey contextKey = "CasbinEnforcer"
-
 	defaultRBACModel = `
 	[request_definition]
 	r = sub, obj, act
@@ -52,6 +48,8 @@ func loadRbacModel() (model.Model, error) {
 }
 
 func Server(config *conf.Data) middleware.Middleware {
+	var log *log.Helper
+
 	a, err := xormadapter.NewAdapter(config.Casbin.Driver, config.Casbin.Source, true)
 	if err != nil {
 		log.Fatalf("error: xormadapter-NewAdapter: %s", err)
