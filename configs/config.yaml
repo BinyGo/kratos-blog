@@ -13,6 +13,9 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+  casbin:
+      driver: mysql
+      source: root:123456@tcp(127.0.0.1:3306)/kratos-casbin
 auth:
   service_key: some-secret-key
   api_key: some-secret-key-for-forntend

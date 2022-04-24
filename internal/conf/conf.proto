@@ -40,8 +40,13 @@ message Data {
     google.protobuf.Duration read_timeout = 6;
     google.protobuf.Duration write_timeout = 7;
   }
+  message Casbin {
+    string driver = 1;
+    string source = 2;
+  }
   Database database = 1;
   Redis redis = 2;
+  Casbin casbin =3;
 }
 
 message Auth {

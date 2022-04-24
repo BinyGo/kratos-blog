@@ -6,6 +6,8 @@ import (
 	"kratos-blog/internal/conf"
 	"kratos-blog/internal/service"
 
+	myCasbin "kratos-blog/internal/pkg/casbin"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -33,7 +35,15 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, blog *service.BlogService, auth *service.AuthService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, cd *conf.Data, blog *service.BlogService, auth *service.AuthService, logger log.Logger) *http.Server {
+	// m, _ := model.NewModelFromFile("../../configs/authz/authz_model.conf")
+	// a := fileAdapter.NewAdapter("../../configs/authz/authz_policy.csv")
+	// a, err := entAdapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/kratos-blog?parseTime=True")
+	// if err != nil {
+	// 	fmt.Println("-----------------------------")
+	// 	fmt.Println(err)
+	// }
+
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -50,6 +60,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, blog *service.BlogService, aut
 						return &jwt4.MapClaims{}
 					}),
 				),
+				myCasbin.Server(cd),
 			).Match(NewWhiteListMatcher()).Build(),
 		),
 		http.Filter(handlers.CORS(

@@ -1,0 +1,9 @@
+p, article, /admin.v1.AdminService/article, read
+p, article, /v1/article, list
+p, user, /v1/login, read
+
+
+g, 1, user
+g, 2, article
+g, 3, article
+g, 4, article

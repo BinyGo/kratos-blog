@@ -38,12 +38,12 @@ func (uc *AuthUseCase) Login(ctx context.Context, user *User) (*pb.LoginReply, e
 		"uid": user.Id,
 		"exp": time.Now().Unix() + 60*60*24,
 	})
-	signedString, err := claims.SignedString([]byte(uc.key))
+	token, err := claims.SignedString([]byte(uc.key))
 
 	if err != nil {
 		return nil, err
 	}
-	return &pb.LoginReply{Token: signedString}, nil
+	return &pb.LoginReply{Token: token}, nil
 
 }
 

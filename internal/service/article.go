@@ -2,12 +2,9 @@ package service
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	pb "kratos-blog/api/blog/v1"
 	"kratos-blog/internal/biz"
 
-	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"go.opentelemetry.io/otel"
 )
 
@@ -36,12 +33,6 @@ func (s *BlogService) DeleteArticle(ctx context.Context, req *pb.DeleteArticleRe
 }
 
 func (s *BlogService) GetArticle(ctx context.Context, req *pb.GetArticleRequest) (*pb.GetArticleReply, error) {
-	user := JwtUser{}
-	if claims, ok := jwt.FromContext(ctx); ok {
-		arr, _ := json.Marshal(claims)
-		json.Unmarshal(arr, &user)
-	}
-	fmt.Println("---------user-------", user)
 	tr := otel.Tracer("api")
 	ctx, span := tr.Start(ctx, "GetArticle")
 	defer span.End()
