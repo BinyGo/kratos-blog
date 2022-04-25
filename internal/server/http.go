@@ -23,6 +23,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 )
 
 var (
@@ -57,14 +58,22 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, cd *conf.Data, blog *service.BlogService, auth *service.AuthService, logger log.Logger) *http.Server {
+func NewHTTPServer(
+	c *conf.Server,
+	ac *conf.Auth,
+	cd *conf.Data,
+	blog *service.BlogService,
+	auth *service.AuthService,
+	logger log.Logger,
+	tp *tracesdk.TracerProvider,
+) *http.Server {
 	//普罗米修斯监控
 	prometheus.MustRegister(_metricSeconds, _metricRequests)
 
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
-			tracing.Server(),
+			tracing.Server(tracing.WithTracerProvider(tp)),
 			logging.Server(logger), //每次收到 Http 请求的时候打印详细请求信息
 			//logging.Client(logger), //每次发起 Http 请求的时候打印详细请求信息
 			validate.Validator(),

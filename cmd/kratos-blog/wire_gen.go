@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"kratos-blog/internal/biz"
 	"kratos-blog/internal/conf"
 	"kratos-blog/internal/data"
@@ -19,7 +20,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, logger log.Logger, tracerProvider *trace.TracerProvider) (*kratos.App, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
@@ -31,7 +32,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, logg
 	authUseCase := biz.NewAuthUseCase(auth, userRepo)
 	userUseCase := biz.NewUserUseCase(userRepo, logger, authUseCase)
 	authService := service.NewAuthService(userUseCase, authUseCase, logger)
-	httpServer := server.NewHTTPServer(confServer, auth, confData, blogService, authService, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, confData, blogService, authService, logger, tracerProvider)
 	grpcServer := server.NewGRPCServer(confServer, blogService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {
