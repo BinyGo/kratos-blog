@@ -69,7 +69,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, cd *conf.Data, blog *service.B
 		http.Middleware(
 			recovery.Recovery(),
 			tracing.Server(),
-			logging.Server(logger),
+			logging.Server(logger), //每次收到 Http 请求的时候打印详细请求信息
+			//logging.Client(logger), //每次发起 Http 请求的时候打印详细请求信息
 			validate.Validator(),
 			selector.Server(
 				jwt.Server(
@@ -104,10 +105,11 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, cd *conf.Data, blog *service.B
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
+	//swagger快速生成api文档
 	//http://localhost:8000/q/swagger-ui
 	openAPIhandler := openapiv2.NewHandler()
 	srv.HandlePrefix("/q/", openAPIhandler)
-
+	//普罗米修斯监控
 	srv.Handle("/metrics", promhttp.Handler())
 
 	v1.RegisterBlogHTTPServer(srv, blog)
