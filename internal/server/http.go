@@ -26,11 +26,7 @@ import (
 )
 
 var (
-	// Name is the name of the compiled software.
-
-	// Version is the version of the compiled software.
-	// Version = "v1.0.0"
-
+	//普罗米修斯监控
 	_metricSeconds = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: "server",
 		Subsystem: "requests",
@@ -62,7 +58,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(c *conf.Server, ac *conf.Auth, cd *conf.Data, blog *service.BlogService, auth *service.AuthService, logger log.Logger) *http.Server {
-
+	//普罗米修斯监控
 	prometheus.MustRegister(_metricSeconds, _metricRequests)
 
 	var opts = []http.ServerOption{
