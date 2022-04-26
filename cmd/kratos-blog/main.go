@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"go.opentelemetry.io/otel/exporters/jaeger"
@@ -22,9 +23,9 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name = "kratos.blog.service"
 	// Version is the version of the compiled software.
-	Version string
+	Version = "0.1"
 	// flagconf is the config flag.
 	flagconf string
 
@@ -35,7 +36,8 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, rr registry.Registrar) *kratos.App {
+
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -46,6 +48,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 			hs,
 			gs,
 		),
+		kratos.Registrar(rr),
 	)
 }
 
@@ -76,6 +79,11 @@ func main() {
 		panic(err)
 	}
 
+	var rc conf.Registry
+	if err := c.Scan(&rc); err != nil {
+		panic(err)
+	}
+
 	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(bc.Trace.Endpoint)))
 	if err != nil {
 		panic(err)
@@ -87,7 +95,7 @@ func main() {
 		)),
 	)
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, logger, tp)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, &rc, logger, tp)
 	if err != nil {
 		panic(err)
 	}

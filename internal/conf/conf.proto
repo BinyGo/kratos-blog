@@ -58,3 +58,11 @@ message Auth {
   string service_key = 1;
   string api_key = 2;
 }
+
+message Registry {
+  message Consul {
+      string address = 1;
+      string scheme = 2;
+  }
+  Consul consul = 1;
+}
