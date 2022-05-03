@@ -1,0 +1,23 @@
+version: '3.6'
+services:
+  web:
+    image: 'registry.gitlab.cn/omnibus/gitlab-jh:latest'
+    restart: always
+    hostname: 'gitlab.biny.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.biny.com'
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - '/www/gitlab/config:/etc/gitlab'
+      - '/www/gitlab/logs:/var/log/gitlab'
+      - '/www/gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+
+#容器启动后重置root密码命令
+#docker exec -it gitlab-web-1 bash
+#gitlab-rake "gitlab:password:reset[root]" #等待一下,提示输入密码,确认密码

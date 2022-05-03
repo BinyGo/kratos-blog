@@ -23,12 +23,12 @@ scrape_configs:
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["BinyPc:9090"]
 
   - job_name: "blog"
     static_configs:
-      - targets: ["172.24.241.171:8000"]
+      - targets: ["BinyPc:8000"]
 
   - job_name: "node"
     static_configs:
-      - targets: ["172.24.241.171:9100"]
+      - targets: ["BinyPc:9100"]
